@@ -25,6 +25,7 @@ Entonces, en esta práctica aprenderemos trabajar las __regresiones lineales__, 
 
 En este práctico utilizamos los **datos procesados** de la [**Encuesta Suplementaria de Ingresos (ESI) 2020**](https://www.ine.cl/estadisticas/sociales/ingresos-y-gastos/encuesta-suplementaria-de-ingresos).Recuerden _**siempre**_ consultar el [**libro códigos**](https://www.ine.cl/docs/default-source/encuesta-suplementaria-de-ingresos/bbdd/manual-y-gu%C3%ADa-de-variables/2020/personas-esi-2020.pdf?sfvrsn=f196cb4e_4) antes de trabajar datos.
 
+
 # 2. Librerías a utilizar
 
 Cargaremos los paquetes con `pacman` [revisar práctico 3](https://learn-r-udp.netlify.app/example/03-practico/) y utilizaremos `sjPlot` para la creación de tablas, `tidyverse` de este universo de paquetes utilizaremos `dplyr` (para la manipulación de datos) y `magrittr` (para utilizar el operador pipe) y `car` para la recodificación de datos. Recuerden que pueden ver más de las funciones de cada paquetes en la sección de recursos (*Cheatsheets*)
@@ -116,7 +117,7 @@ Para generar una tabla de correlación entre las variables `ingresos` y `edad`, 
 
 Previamente debemos seleccionar las variables a utilizar, ya que no tiene sentido incluir en el análisis variables nominales
 
-```{r casen corr, echo=TRUE, results='markup'}
+```{r ESI corr, echo=TRUE, results='markup'}
 datos_proc %>%
       select(ingresos, edad) %>% 
       tab_corr(.,
@@ -132,7 +133,7 @@ Ahora podemos observar que efectivamente existe una correlación entre los ingre
 
 Podemos graficar la relación de ambas variables con la función `plot_scatter` de `sjPlot`
 
-```{r casen scatter err, echo=TRUE, message=FALSE, warning=FALSE, results='markup'}
+```{r ESI scatter err, echo=TRUE, message=FALSE, warning=FALSE, results='markup'}
 datos_proc %>%  
    plot_scatter(., ingresos, edad)
 ```
@@ -141,14 +142,14 @@ datos_proc %>%
 Acá nos damos cuenta de que la variable `ingresos`, contiene casos muy concentrados en los niveles más bajos y pocos casos muy altos, para visualizarlos de mejor forma, los filtraremos (recuerden que `sjPlot` es compatible con el universo `tidyverse`)
 
 
-```{r casen scatter, echo=TRUE, message=FALSE, warning=FALSE, results='markup'}
+```{r ESI-scatter, echo=TRUE, message=FALSE, warning=FALSE, results='markup'}
 datos_proc %>%  filter(ingresos >= 10000 & ingresos <= 1500000) %>%
    plot_scatter(., ingresos, edad)
 ```
 
 Recuerden que también podemos incluir una variable de comparación, para eso añadiremos la variable `sexo`
 
-```{r casen scatter sep, echo=TRUE, message=FALSE, warning=FALSE, results='markup'}
+```{r ESI-scatter-sep, echo=TRUE, message=FALSE, warning=FALSE, results='markup'}
 datos_proc %>%  filter(ingresos >= 10000 & ingresos <= 1500000) %>%
     plot_scatter(., ingresos, edad, sexo,
              fit.grps = "loess", grid = TRUE)
@@ -159,7 +160,7 @@ datos_proc %>%  filter(ingresos >= 10000 & ingresos <= 1500000) %>%
 
 Para los predictores categóricos crearemos gráficos de cajas con la función `plot_grpfrq` de `sjPlot`
 
-```{r casen graf caj, echo=TRUE, message=FALSE, warning=FALSE, results='markup'}
+```{r ESI-graf-caj, echo=TRUE, message=FALSE, warning=FALSE, results='markup'}
 plot_grpfrq(datos_proc$ingresos, datos_proc$educacion,
             title = "Gráfico de caja",
              type = c("boxplot"))
@@ -167,7 +168,7 @@ plot_grpfrq(datos_proc$ingresos, datos_proc$educacion,
 
 Además, se puede incorporar una tercera variable, en este caso lo haremos con la variable `sexo`
 
-```{r casen box 3 var, echo=TRUE, message=FALSE, warning=FALSE, results='markup'}
+```{r ESI-box, echo=TRUE, message=FALSE, warning=FALSE, results='markup'}
 plot_grpfrq(datos_proc$ingresos, datos_proc$educacion, intr.var = datos_proc$sexo, 
             title = "Gráfico de cajas",
             type = "box")
@@ -223,11 +224,23 @@ reg_1 <-lm((ingresos ~ edad), data = datos_proc)
 reg_1
 ```
 
-pero el problema es que al observar el objeto creado, no es muy presentable para informes, por eso usaremos la función `tab_model` de `sjPlot`
+pero el problema es que al observar el objeto creado, no es muy presentable para informes, por eso usaremos la función `tab_model` de `sjPlot`, que tiene la siguiente estructura:
+
+```{r reg-ej, eval=FALSE, message=FALSE, warning=FALSE, include=TRUE}
+sjPlot::tab_model(objeto_creado, 
+                  show.ci= F/T,  # este argumento muestra los intervalos de confianza
+                  encoding = "UTF-8",  # evita errores en caracteres
+                  file = "output/figures/reg1_tab.doc") # guarda lo creado automáticamente
+```
+
+
+Ahora en nuestros datos se vería así:
 
 ```{r reg-sj, echo=TRUE, message=FALSE, warning=FALSE, results='markup'}
 sjPlot::tab_model(reg_1, show.ci=FALSE,  encoding = "UTF-8", file = "output/figures/reg1_tab.doc")
 ```
+
+
 
 ## Regresión múltiple
 
@@ -236,6 +249,12 @@ Ahora queremos incorporar las demás variables al modelo, para lo haremos de la 
 ```{r regmult, echo=TRUE, message=FALSE, warning=FALSE, results='markup'}
 reg_2 <-lm((ingresos ~ edad + sexo), data = datos_proc)
 ```
+
+
+```{r reg-ej-s, echo=TRUE, message=FALSE, warning=FALSE, results='markup'}
+sjPlot::tab_model(reg_2, show.ci=FALSE,  encoding = "UTF-8", file = "output/figures/regnc_tab.doc")
+```
+
 
 ¡Pero espera! ¡`sexo` no es una variable continua!
 
@@ -262,9 +281,11 @@ sjPlot::tab_model(list(reg_1, reg_2, reg_3), # los modelos estimados
   p.style = "stars", # asteriscos de significación estadística
   dv.labels = c("Modelo 1", "Modelo 2", "Modelo 3"), # etiquetas de modelos o variables dep.
   string.pred = "Predictores", string.est = "β", # nombre predictores y símbolo beta en tabla
+  encoding =  "UTF-8",
   file = "output/figures/reg_tab_all.doc")
 ```
 
+Ahora podemos observar que a diferencia de la tabla anterior la variable `sexo`, tiene incluida la categoría de respuesta de comparación.
 
 # 6. Visualización 
 
@@ -285,6 +306,7 @@ Esto visualizado con nuestro modelo se ve así:
 sjPlot::plot_model(reg_3, ci.lvl = c(0.95), title = "Estimación de predictores", vline.color = "purple")
 ```
 
+Terminamos por este práctico ¡Pero aún falta la regresión logística!
 
 # 7. Resumen
 
@@ -294,12 +316,12 @@ En este práctico aprendimos a
 - Incorporar predictores categóricos
 - Crear y visualizar regresiones múltiples
 
-# Recursos
+# 8. Recursos
 
 - [sjPlot](https://strengejacke.github.io/sjPlot/) 
 - [tidyverse](https://www.tidyverse.org/packages/)
 - [magrittr](https://magrittr.tidyverse.org/)
 
-# Reporte de progreso
+# 9. Reporte de progreso
 
 ¡Recuerda rellenar tu [reporte de progreso](). En tu correo electrónico está disponible el código mediante al cuál debes acceder para actualizar tu estado de avance del curso.
