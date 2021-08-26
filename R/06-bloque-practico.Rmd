@@ -25,13 +25,13 @@ Entonces, en esta práctica aprenderemos trabajar las __regresiones lineales__, 
 
 En este práctico utilizamos los **datos procesados** de la [**Encuesta Suplementaria de Ingresos (ESI) 2020**](https://www.ine.cl/estadisticas/sociales/ingresos-y-gastos/encuesta-suplementaria-de-ingresos).Recuerden _**siempre**_ consultar el [**libro códigos**](https://www.ine.cl/docs/default-source/encuesta-suplementaria-de-ingresos/bbdd/manual-y-gu%C3%ADa-de-variables/2020/personas-esi-2020.pdf?sfvrsn=f196cb4e_4) antes de trabajar datos.
 
-
+````
 - [<i class="fas fa-file-archive"></i> `06-bloque.zip`](https://github.com/learn-R/09-class/raw/main/06-bloque.zip)
-
+````
 
 # 2. Librerías a utilizar
 
-Cargaremos los paquetes con `pacman` [revisar práctico 3](https://learn-r-udp.netlify.app/example/03-practico/) y utilizaremos `sjPlot` para la creación de tablas, `tidyverse` de este universo de paquetes utilizaremos `dplyr` (para la manipulación de datos) y `magrittr` (para utilizar el operador pipe) y `car` para la recodificación de datos. Recuerden que pueden ver más de las funciones de cada paquetes en la sección de *recursos*
+Cargaremos los paquetes con `pacman` [revisar práctico 3](https://learn-r-udp.netlify.app/example/03-practico/) y utilizaremos `sjPlot` para la creación de tablas, `tidyverse` de este universo de paquetes utilizaremos `dplyr` (para la manipulación de datos) y `magrittr` (para utilizar el operador pipe) y finalmente la libreria `car` para la recodificación de datos. Recuerden que pueden ver más de las funciones de cada paquetes en la sección de *recursos*
 
 
 ```{r librerias, echo=TRUE, results='hide'}
@@ -70,7 +70,7 @@ head(datos_proc)
 ```
 
 
-Ahora sabemos que trabajaremos con `"ingresos"`,  `"educacion"`, `"sexo"` y `"edad"`. Ahora inclusive podemos repasar lo visto en el [práctico anterior](https://learn-r-udp.netlify.app/example/04-practico/)  y explorar nuestros datos con `sjPlot::view_df()`
+Ahora sabemos que trabajaremos con `"ingresos"`,  `"educacion"`, `"sexo"` y `"edad"`. Inclusive podemos repasar lo visto en el [práctico anterior](https://learn-r-udp.netlify.app/example/04-practico/)  y explorar nuestros datos con `sjPlot::view_df()`
 
 ```{r echo=TRUE}
 sjPlot::view_df(datos_proc,
@@ -89,7 +89,7 @@ Para eso el primer paso es decirle a la base que transformaremos la variable com
 datos_proc$educacion <- as_factor(datos_proc$educacion)
 ```
 
-Para luego lo recodificaremos con la función `recode` del paquete `car`
+Luego recodificaremos la variable con la función `recode` del paquete `car`
 
 ```{r echo=TRUE, message=FALSE, warning=FALSE}
 datos_proc$educacion <- car::recode(datos_proc$educacion, recodes = c("'Nivel ignorado' = NA; 
@@ -109,7 +109,7 @@ Perfecto, podemos ver las variables que tenemos y sus categorías de respuesta, 
 
 # 4. Modelo de regresión
 
-Previo a eso recordemos que la fórmula de la regresión lineal simple es:
+Previo al trabajo en R recordemos que la fórmula de la regresión lineal simple es:
 
 \begin{equation}
 \widehat{Y}=b_{0} +b_{1}X
@@ -124,8 +124,8 @@ Mientras que en la regresión lineal múltiple es:
 Donde
 
 - $\widehat{Y}$ es el valor estimado/predicho de $Y$
-- $b_{0}$ es el **intercepto** de la recta (el valor de Y cuando X es 0)
-- $b_{1}$ y $b_{2}$ son los **coeficiente de regresión**, que nos dice cuánto aumenta Y por cada punto que aumenta X (pendiente)
+- $b_{0}$ es el **intercepto** de la recta (el valor de Y cuando las X's son 0)
+- $b_{1}$ y $b_{2}$ son los **coeficientes de regresión**, que nos dice cuánto aumenta Y por cada punto que aumenta X (pendiente)
 
 
 Les mostramos esto porque de la misma forma se diferencian ambos procedimientos en R
@@ -198,8 +198,8 @@ datos_proc$sexo <- as_factor(datos_proc$sexo)
 Perfecto ahora si podemos añadir predictores categóricos a nuestra regresión múltiple
 
 ```{r reg-pred-cat, echo=TRUE, message=FALSE, warning=FALSE, results='markup'}
-reg_2 <-lm((ingresos ~ edad + educacion), data = datos_proc)
-reg_3 <-lm((ingresos ~ edad + educacion + sexo), data = datos_proc)
+reg_2 <-lm((ingresos ~ edad + sexo), data = datos_proc)
+reg_3 <-lm((ingresos ~ edad + sexo + educacion), data = datos_proc)
 ```
 
 Pero que pasa si queremos incluir todos los modelos creados en una sola tabla, para eso usaremos nuevamente la función `tab_model` de `sjPlot` 
