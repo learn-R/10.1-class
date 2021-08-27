@@ -1,5 +1,7 @@
 
-# 2. Cargar librerías --------------------------------------------------------
+# Bloque 5: Regresion lineal
+
+# 1. Cargar librerías --------------------------------------------------------
 
 pacman::p_load(sjPlot, 
                tidyverse, 
@@ -11,7 +13,7 @@ pacman::p_load(sjPlot,
 
 
 
-# 3. Importar datos -------------------------------------------------------
+# 2. Importar datos -------------------------------------------------------
 
 
 # Una vez cargado los paquetes a utilizar, debemos cargar los datos procesados.
@@ -65,7 +67,7 @@ sjPlot::view_df(datos_proc,
 
 
 
-# 4. Modelos de regresión -------------------------------------------------
+# 3. Modelos de regresión -------------------------------------------------
 
 
 # Regresión lineal simple -------------------------------------------------
@@ -116,14 +118,14 @@ sjPlot::tab_model(list(reg_1, reg_2, reg_3), # los modelos estimados
                   encoding =  "UTF-8")
 
 
-# 5. Visualización --------------------------------------------------------
+# 4. Visualización --------------------------------------------------------
 
 # Para visualizar o graficar los coeficientes de regresión para poder observar el impacto de cada variable en el modelo utilizaremos la función `plot_model` de `sjPlot`
 
 sjPlot::plot_model(reg_3, ci.lvl = c(0.95), title = "Estimación de predictores", vline.color = "purple")
 
 
-# 6. Regresión logística --------------------------------------------------
+# 5. Regresión logística --------------------------------------------------
 
 # La regresión lineal es sumamente útil cuando estamos trabajando con variables continuas,
 # como ingresos. Sin embargo, la mayor parte de las variables que nos interesa explicar
