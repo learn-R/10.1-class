@@ -78,7 +78,10 @@ reg_1
 
 #pero el problema es que al observar el objeto creado, no es muy presentable para informes, por eso usaremos la función `tab_model` de `sjPlot`
 
-sjPlot::tab_model(reg_1, show.ci=FALSE,  encoding = "UTF-8")
+sjPlot::tab_model(reg_1, 
+                  show.ci=FALSE,  
+                  encoding = "UTF-8", 
+                  file='output/modelosimple.doc')
 
 
 
@@ -89,7 +92,10 @@ sjPlot::tab_model(reg_1, show.ci=FALSE,  encoding = "UTF-8")
 
 reg_2 <-lm((ingresos ~ edad + sexo), data = datos_proc)
 
-sjPlot::tab_model(reg_2, show.ci=FALSE,  encoding = "UTF-8")
+sjPlot::tab_model(reg_2, 
+                  show.ci=FALSE,  
+                  encoding = "UTF-8", 
+                  file='output/modelomultiple.doc')
 
 #¡Pero espera! ¡`sexo` no es una variable continua!
   
@@ -115,14 +121,18 @@ sjPlot::tab_model(list(reg_1, reg_2, reg_3), # los modelos estimados
                   p.style = "stars", # asteriscos de significación estadística
                   dv.labels = c("Modelo 1", "Modelo 2", "Modelo 3"), # etiquetas de modelos o variables dep.
                   string.pred = "Predictores", string.est = "β", # nombre predictores y símbolo beta en tabla
-                  encoding =  "UTF-8")
+                  encoding =  "UTF-8", 
+                  file='output/modelosmultiples.doc')
 
 
 # 4. Visualización --------------------------------------------------------
 
 # Para visualizar o graficar los coeficientes de regresión para poder observar el impacto de cada variable en el modelo utilizaremos la función `plot_model` de `sjPlot`
 
-sjPlot::plot_model(reg_3, ci.lvl = c(0.95), title = "Estimación de predictores", vline.color = "purple")
+sjPlot::plot_model(reg_3, 
+                   ci.lvl = c(0.95), 
+                   title = "Estimación de predictores", 
+                   vline.color = "purple")
 
 
 # 5. Regresión logística --------------------------------------------------
@@ -163,7 +173,8 @@ sjPlot::tab_model(reg_log,
                   p.style = "stars", 
                   dv.labels = "Modelo",
                   string.pred = "Predictores", 
-                  string.est = "β")
+                  string.est = "β", 
+                  file='output/modeloreg.doc')
 
 # Para el caso de las variables categóricas (que han sido transformadas a tipo `factor`), 
 # R toma como categoría de referencia al primer nivel (`level`) de la variable. En el caso 
@@ -185,7 +196,8 @@ sjPlot::tab_model(list(reg_log, reg_log2),
                   p.style = "stars", 
                   dv.labels = c("Modelo", "Modelo (Relevel)"),
                                 string.pred = "Predictores", 
-                                string.est = "β")
+                                string.est = "β", 
+                  file='output/reglog_relevel.doc')
 
 # No obstante, por defecto el comando `tab_model()` arroja los coeficientes como 
 # logaritmos de las chanches (Log-odds), lo cual dificulta la interpretación de los 
@@ -198,7 +210,8 @@ sjPlot::tab_model(reg_log,
                   p.style = "stars",
                   dv.labels = "Modelo (OR)",
                   string.pred = "Predictores",
-                  string.est = "β")
+                  string.est = "β", 
+                  file='output/reglog_exp.doc')
 
 # También podemos graficar la significancia estadística de nuestros coeficientes, con 
 # `plot_model()` de `sjPlot`. Por defecto, esta función presenta los coeficientes como 
