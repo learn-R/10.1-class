@@ -347,7 +347,7 @@ modelo_general <- lm(ing_t_t ~ .,
 step(modelo_general, keep = nobs)
 ```
 
-# -------------- hasta acá ---------------
+# -------------- hasta acá --------------- ???
 
 
 ## 5.4 Información de los modelos
