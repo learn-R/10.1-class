@@ -27,7 +27,7 @@ Entonces, en esta práctica aprenderemos trabajar las __regresiones lineales__, 
 En este práctico utilizamos los **datos procesados** de la [**Encuesta Suplementaria de Ingresos (ESI) 2020**](https://www.ine.cl/estadisticas/sociales/ingresos-y-gastos/encuesta-suplementaria-de-ingresos).Recuerden _**siempre**_ consultar el [**libro códigos**](https://www.ine.cl/docs/default-source/encuesta-suplementaria-de-ingresos/bbdd/manual-y-gu%C3%ADa-de-variables/2020/personas-esi-2020.pdf?sfvrsn=f196cb4e_4) antes de trabajar datos.
 
 
-zip 
+- [<i class="fas fa-file-archive"></i> `08-class.zip`](https://github.com/learn-R/09-class/raw/main/08-clase.zip)
 
 
 # 2. Paquetes a utilizar
@@ -84,6 +84,7 @@ Perfecto, podemos ver las variables que tenemos y sus categorías de respuesta p
 # 5. Modelo de regresión
 
 ## 5.1 Formula
+
 Previo a eso recordemos que la fórmula de la regresión lineal simple es:
 
 \begin{equation}
@@ -102,6 +103,59 @@ Donde
 - $b_{0}$ es el **intercepto** de la recta (el valor de Y cuando X es 0)
 - $b_{1}$ y $b_{2}$ son los **coeficiente de regresión**, que nos dice cuánto aumenta Y por cada punto que aumenta X (pendiente)
 
+{{< div "note" >}}
+
+### Ecuaciones en LateX
+
+Previo a revisar regresiones en R, es necesario aprender cómo están hechas estas ecuaciones
+
+Para realizar esto hay dos formas de hacerlo, para ello será muy importante el signo `$`, ¿por qué? Porque hay varias formas de crearlo y en la mayoría se utiliza. Para entenderlo usaremos el ejemplo que está arriba 
+
+Forma 1 de ecuación: Esta forma se utiliza para que la fórmula esté centrada en una linea específica       
+
+```
+\begin{equation}
+\widehat{Y}=b_{0} +b_{1}X
+\end{equation}
+```
+
+- Resultado
+
+\begin{equation}
+\widehat{Y}=b_{0} +b_{1}X
+\end{equation}
+
+- Con 
+
+\begin le indicamos el inicio y con las corcheas le explicamos que queremos escribir una ecuación {equation}
+\widehat le especificamos la ecuación
+\end le decimos a R que es el fin de la ecuación {equation}
+
+
+Forma 2: Esta forma se utiliza para que la fórmula este de forma contínua en el texto (_inline_)
+
+
+```
+${Y}=b_{0} +b_{1}X$
+```
+
+- Resultado
+
+${Y}=b_{0} +b_{1}X$
+
+Forma 3: Con esta forma también la ecuación se verá centrada
+
+```
+$${Y}=b_{0} +b_{1}X$$
+```
+
+- Resultado 
+
+$${Y}=b_{0} +b_{1}X$$
+
+Si quieres aprender más sobre el uso de ecuaciones en LateX pueden ir [acá](https://manualdelatex.com/tutoriales/ecuaciones)
+
+{{</div>}}
 
 Les mostramos esto porque de la misma forma se diferencian ambos procedimientos en R
 
@@ -135,14 +189,16 @@ modelo0_sin <- lm(ing_t_t ~ 1,
 ```{r}
 summary(modelo0_sin)
 ```
- 
+
+
 ### Modelo nulo con pesos muestrales
 
 Luego crearemos el modelo con peso muestral, para esto debemos añadir un nuevo argumento `weights`, donde se especifica el factor de expansión 
 
 ```{r}
 modelo0 <- lm(ing_t_t ~ 1,
-              data = datos, weights = fact_cal_esi)
+              data = datos, 
+              weights = fact_cal_esi)
 ```
 
 Ahora veremos los resultados con 
@@ -157,6 +213,20 @@ Entonces ¿qué diferencias hay?
 summary(modelo0);summary(modelo0_sin)
 ```
 
+Entonces, esto en ecuación se vería reflejado de la siguiente forma:
+
+Modelo sin muestral
+
+\begin{equation}
+\widehat{Y}= 206355 +b_{1}X
+\end{equation}
+
+Modelo con peso muestral
+
+\begin{equation}
+\widehat{Y}= 256201 +b_{1}X
+\end{equation}
+
 Hay diferencias en el intercepto y en los errores estándar, ya que uno asume pesos de precisión y otro asume pesos muestrales.
 
 Por ello es muy importante incorporar el peso muestral en el análisis, sino los estimadores puntuales no serán válidos y menos la inferencia que se realiza posteriormente, debido a la sobrestimación de la precisión de los estimadores. 
@@ -170,24 +240,46 @@ El primero sera entre ingresos y edad (`ing_t_t`, `edad`)
 
 ```{r modelo1, echo=TRUE, message=FALSE, warning=FALSE, results='markup'}
 modelo1 <- lm(ing_t_t ~ edad,
-              data = datos, weights = fact_cal_esi)
+              data = datos, 
+              weights = fact_cal_esi)
 ```
 
 ```{r}
 summary(modelo1)
 ```
 
+Ecuación:
+
+```
+\begin{equation}
+\widehat{Y}= b_{0} +b_{1}X
+\end{equation}
+
+Reemplazamos
+
+\begin{equation}
+\widehat{ing_t_t}= 127658.05 + 3511.38*edad
+\end{equation}
+```
+
+Resultado: 
+
+\begin{equation}
+\widehat{ing_t_t}= 127658.05 + 3511.38*edad
+\end{equation}
+
+
 También podemos ver la relación entre ingresos y sexo (`ing_t_t`, `sexo`)
 
 ```{r modelo2_sin, echo=TRUE, message=FALSE, warning=FALSE, results='markup'}
 modelo2_sin <- lm(ing_t_t ~ sexo,
-              data = datos, weights = fact_cal_esi)
+              data = datos, 
+              weights = fact_cal_esi)
 ```
 
 ```{r}
 summary(modelo2_sin)
 ```
-
 
 ¡Pero espera! ¡`sexo` no es una variable continua!
 
@@ -205,13 +297,13 @@ Listo ahora veremos el modelo
 
 ```{r}
 modelo2 <- lm(ing_t_t ~ sexo,
-              data = datos, weights = fact_cal_esi)
+              data = datos, 
+              weights = fact_cal_esi)
 ```
 
 ```{r}
 summary(modelo2)
 ```
-
 
 Como pueden ver ahora especifica qué categoría de respuesta utiliza para la comparación, esto en la variable sexo quizá puede ser intuitivo, pero ¿qué pasaría con las que tienen otras categorías de respuesta?
 
@@ -227,7 +319,8 @@ Modelo para `ciuo08`
 
 ```{r}
 modelo3 <- lm(ing_t_t ~ ciuo08,
-              data = datos, weights = fact_cal_esi)
+              data = datos, 
+              weights = fact_cal_esi)
 
 ```
 
@@ -235,12 +328,12 @@ modelo3 <- lm(ing_t_t ~ ciuo08,
 summary(modelo3)
 ```
 
-
 Modelo para `est_conyugal`
 
 ```{r}
 modelo4 <- lm(ing_t_t ~ est_conyugal,
-              data = datos, weights = fact_cal_esi)
+              data = datos, 
+              weights = fact_cal_esi)
 ```
 
 ```{r}
@@ -254,21 +347,25 @@ Ahora queremos incorporar las demás variables al modelo, para lo haremos de la 
 
 ```{r regmult, echo=TRUE, message=FALSE, warning=FALSE, results='markup'}
 modelo5 <- lm(ing_t_t ~ edad + sexo + ciuo08 + est_conyugal,
-              data = datos, weights = fact_cal_esi)
+              data = datos, 
+              weights = fact_cal_esi)
 ```
 
 ```{r}
 summary(modelo5)
 ```
 
-### Regresión con paquete [`stats`](https://www.rdocumentation.org/packages/stats/versions/3.6.2)
+### Regresión con paquete  
+
+[`stats`](https://www.rdocumentation.org/packages/stats/versions/3.6.2)
 
 `stats` tiene su función para hacer diverso tipo de regresiones, esta es `glm`, la cual tiene una estructura similar a la anterior, sólo que esta se debe especificar es tipo de regresión que se necesita en el argumento [`family`](https://www.statmethods.net/advstats/glm.html). Así quedaría nuestro modelo:
 
 ```{r}
 modelo5_glm <- glm(ing_t_t ~ edad + sexo + ciuo08 + est_conyugal,
                family = gaussian(link = "identity"),
-               data = datos, weights = fact_cal_esi)
+               data = datos, 
+               weights = fact_cal_esi)
 ```
 
 ```{r}
@@ -280,7 +377,9 @@ summary(modelo5_glm)
 `survey` también tiene su función para regresiones, para ello primero crearemos un objeto encuesta
 
 ```{r}
-esi_design <- as_survey_design(datos, ids = 1, weights = fact_cal_esi)
+esi_design <- as_survey_design(datos, 
+                               ids = 1, 
+                               weights = fact_cal_esi)
 ```
 
 Luego usamos la función `svyglm` y en el argumento `design` dejamos el objeto creado y así  generamos nuestro modelo:
@@ -296,58 +395,6 @@ Ahora visualizamos
 ```{r}
 summary(modelo5_survey)
 ```
-
-# -------------- de acá ---------------
-### Transformaciones funcionales
-
-```{r include=FALSE}
-#quitar esto cuando se actualicen los datos
-datos$ciuo08 <- as.numeric(datos$ciuo08)
-datos$sexo <- as.numeric(datos$sexo)
-datos$est_conyugal <- as.numeric(datos$est_conyugal)
-
-datos <- datos %>% filter(edad>1, ing_t_t>1)
-```
-
-
-Para modelos log-lineal
-
-```{r}
-modelo5_log <- lm(log(ing_t_t) ~ edad + sexo + ciuo08 + est_conyugal,
-              data = datos, weights = fact_cal_esi)
-```
-
-
-Para modelos log-cuadratico
-```{r}
-modelo5_log_cuadratico <- lm(log(ing_t_t) ~ edad + (edad)^2 + sexo + ciuo08 + est_conyugal,
-                  data = datos, weights = fact_cal_esi)
-```
-
-Para modelo log-interaccion
-```{r}
-modelo5_log_cuadratico <- lm(log(ing_t_t) ~ edad  + sexo + ciuo08 + est_conyugal +
-                               sexo*est_conyugal,
-                             data = datos, weights = fact_cal_esi)
-```
-
-¡Pueden hacer la transformación funcional que estimen conveniente!
-
- Para la creación exploratoria
- 
-```{r}
-modelo_general <- lm(ing_t_t ~ .,
-                     data = datos, weights = datos$fact_cal_esi,
-                     na.action= na.omit)
-
-
-```
- 
-```{r}
-step(modelo_general, keep = nobs)
-```
-
-# -------------- hasta acá --------------- ???
 
 
 ## 5.4 Información de los modelos
@@ -394,10 +441,12 @@ modelo5$fitted.values
 ```
 
 ```{r}
-get_model_data(modelo5, type = c("pred"))
-get_model_data(modelo5, type = "pred", terms = "sexo")
+get_model_data(modelo5, 
+               type = c("pred"))
+get_model_data(modelo5, 
+               type = "pred", 
+               terms = "sexo")
 ```
-
 
 
 {{< div "note" >}}
@@ -425,15 +474,22 @@ Si bien `summary` es un código muy útil para visualizar los modelos creados, e
 ```{r reg-ej, eval=FALSE, message=FALSE, warning=FALSE, include=TRUE}
 sjPlot::tab_model(objeto_creado, 
                   show.ci= F/T,  # este argumento muestra los intervalos de confianza
+                  show.p = F/T, #Este argumento muestra los valores p
+                  show.obs = F/T, # Este argumento muestra las observaciones
+                  title = "Título de la tabla a crear",
+                  digits = 2, # muestra la cantidad de dígitos que tednrá la tabla
+                  p.style = c("numeric", "stars", "numeric_stars", "scientific", "scientific_stars"), #cómo representa el pvalue 
                   encoding = "UTF-8",  # evita errores en caracteres
                   file = "output/figures/reg1_tab.doc") # guarda lo creado automáticamente
 ```
 
-
 Para visualizar sólo un modelo puede hacerse de esta forma y en nuestros datos se vería así:
 
 ```{r reg-ej-s, echo=TRUE, message=FALSE, warning=FALSE, results='markup'}
-sjPlot::tab_model(modelo0, show.ci=FALSE,  encoding = "UTF-8", file = "output/figures/regnc_tab.doc")
+sjPlot::tab_model(modelo0, 
+                  show.ci=FALSE,  
+                  encoding = "UTF-8", 
+                  file = "output/figures/regnc_tab.doc")
 ```
 
 Las ventajas de este código es que se puede especificar el `encoding`, y se puede exportar la tabla, que tiene mejor visualización que la que arroja la consola con `summary`
@@ -475,33 +531,6 @@ sjPlot::plot_model(modelo5_log,
                    ci.lvl = c(0.95), 
                    title = "Estimación de predictores", 
                    vline.color = "purple")
-```
-
-### Efectos marginales
-
-Para esto con el argumento `type`, podemos especificar los calores predichos para los **términos** específicos del modelo
-
-```{r message=FALSE, warning=FALSE}
-plot_model(modelo5_log,
-           type = "pred")
-```
-
-Y para especificar los términos se utiliza el argumento `terms`, lo que indica los términos a mostrar en los efector marginales
-
-```{r message=FALSE, warning=FALSE}
-plot_model(modelo5_log,
-           type = "pred",
-           terms = "sexo")
-```
-
-Debe mencionarse al menos uno y máximo tres
-
-```{r message=FALSE, warning=FALSE}
-plot_model(modelo5_log,
-           type = "pred",
-           terms = c("sexo", "est_conyugal")) 
-
-
 ```
 
 
