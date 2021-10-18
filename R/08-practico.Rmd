@@ -525,7 +525,7 @@ sjPlot::plot_model(objeto_creado,
 Esto visualizado con nuestro modelo se ve así:
 
 ```{r message=FALSE, warning=FALSE, , echo=TRUE}
-sjPlot::plot_model(modelo5_log, 
+sjPlot::plot_model(modelo5, 
                    show.p = T,
                    show.values =  T,
                    ci.lvl = c(0.95), 
