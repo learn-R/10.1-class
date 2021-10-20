@@ -120,7 +120,7 @@ get_model_data(modelo5, type = c("pred"))
 get_model_data(modelo5, type = "pred", terms = "sexo")
 
 # Adicional: Informacion como dataframe ----------------------------------------------
-broom::augment(modelo5) #puedo guardar como objeto
+modelo_df <- broom::augment(modelo5) #puedo guardar como objeto
 
 # 3. Representación gráfica -----------------------------------------------
 
